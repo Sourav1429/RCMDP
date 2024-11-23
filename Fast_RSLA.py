@@ -13,7 +13,7 @@ import numpy as np
 
 env_type = ["MR","RS"]
 model_type=["DQN","A2C"]
-model_chosen = 0
+model_chosen = 1
 env_chosen = 0
 
 with open(env_type[env_chosen]+"_all_policies_"+model_type[model_chosen],"rb") as f:
