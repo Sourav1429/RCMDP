@@ -5,11 +5,85 @@ Created on Sat Nov 23 06:28:24 2024
 @author: Sourav
 """
 
-from Robust_Safe_RL import Robust_Safe_RLA
 from Machine_Rep import MachineReplacementEnv,RiverSwimEnv
 import pickle
 import numpy as np
 
+class Robust_Safe_RLA:
+    def __init__(self,nS):
+        self.nS = nS
+    def form_probability_transition(self,P,policy,nS,nA):
+        ret_mat = np.zeros((nS,nS))
+        #print(policy.shape)
+        for a in range(nA):
+            for s in range(nS):
+                for s_dash in range(nS):
+                    #print("(s,a)=",s,a,s_dash)
+                    #print(policy[int(s),int(a)])
+                    #print(P[int(a),int(s),int(s_dash)])
+                    ret_mat[int(s),int(s_dash)]+= policy[int(s),int(a)]*P[int(a),int(s),int(s_dash)]
+        return ret_mat
+    def get_vf(self,P, R, pi, gamma=0.9):
+        """
+        Compute the value function for an MDP under a given policy using matrix operations.
+
+        Parameters:
+            P (np.ndarray): Transition probability matrix of shape (nS, nS, nA).
+            R (np.ndarray): Reward matrix of shape (nS, nA).
+            pi (np.ndarray): Policy matrix of shape (nS, nA).
+            gamma (float): Discount factor (0 <= gamma < 1).
+
+        Returns:
+            np.ndarray: Value function vector of shape (nS,).
+        """
+
+        # Compute the policy transition matrix P_pi
+        nS = self.nS
+        P_pi = P
+        #print("pi=",pi)
+        # Compute the policy reward vector R_pi
+        R_pi = np.sum(pi * np.transpose(R), axis=1)
+        #print(R_pi)
+
+        # Solve the linear system (I - gamma * P_pi) V = R_pi
+        I = np.eye(nS)
+        V = np.linalg.solve(I - gamma * P_pi, R_pi)
+        #print(V)
+        return V
+    def find_min_vf_cf(self,policy,us,R,C,init,dist=0):
+        nA,nS = R.shape
+        v_list=[]
+        c_list=[]
+        policy = np.array(policy)
+        for P in us:
+            #print("P=",P)
+            #print("policy=",policy)
+            Tr = self.form_probability_transition(P, policy, nS, nA)
+            #print("Transform_prob=",Tr)
+            vf,cf = self.get_vf(Tr,R,policy),self.get_vf(Tr,C,policy)
+            #print("VF=",vf)
+            #print("CF=",cf)
+            #break
+            if(dist==0):
+                vf,cf = vf[init],cf[init]
+            else:
+                vf,cf = np.dot(vf,init),np.dot(cf,init)
+            v_list.append(vf)
+            c_list.append(cf)
+        return np.min(v_list),np.min(c_list)
+    def cross_product_of_keys(self,dictionary):
+        """
+        Finds the cross product of the elements of keys in a Python dictionary.
+
+        Args:
+            dictionary (dict): The dictionary to process.
+
+        Returns:
+            list: A list of tuples representing the cross product.
+        """
+
+        key_values = [dictionary[key] for key in dictionary]
+        return list(product(*key_values))
 
 env_type = ["MR","RS"]
 model_type=["DQN","A2C"]
