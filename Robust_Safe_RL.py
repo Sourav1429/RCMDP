@@ -89,8 +89,8 @@ class Robust_Safe_RLA:
 
 env_type = ["MR","RS"]
 model_type=["DQN","A2C"]
-model_chosen = 0
-env_chosen = 0
+model_chosen = 1
+env_chosen = 1
 
 
 with open("Uncertainity_set_"+env_type[env_chosen],"rb") as f:
@@ -98,7 +98,7 @@ with open("Uncertainity_set_"+env_type[env_chosen],"rb") as f:
 #print(us)
 f.close()
 
-with open("all_policies_"+env_type[env_chosen]+"_Machine_Replacement_"+model_type[model_chosen],"rb") as f:
+with open("all_policies_"+env_type[env_chosen]+"_River_swim_"+model_type[model_chosen],"rb") as f:
     pol_set = pickle.load(f)
 #print(pol_set)
 f.close()
@@ -111,10 +111,10 @@ elif(env_chosen==1):
     obj = RiverSwimEnv()
     init_state = 3
 dist = 0
-T = 10
+T = 1000
 alpha = 0.1
 lambda_ = 0.5
-b = 3
+b = 3.1
 eta = 0.1
 zi = 0.5
 
