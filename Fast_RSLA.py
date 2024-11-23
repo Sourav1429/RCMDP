@@ -90,6 +90,7 @@ model_type=["DQN","A2C"]
 model_chosen = 1
 env_chosen = 0
 
+print("Chosen::::",env_type[env_chosen]+"_all_policies_"+model_type[model_chosen]) 
 with open(env_type[env_chosen]+"_all_policies_"+model_type[model_chosen],"rb") as f:
     total_policies = pickle.load(f)
 f.close()
