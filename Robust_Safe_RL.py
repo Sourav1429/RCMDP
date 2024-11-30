@@ -89,7 +89,7 @@ class Robust_Safe_RLA:
 
 env_type = ["MR","RS"]
 model_type=["DQN","A2C"]
-model_chosen = 1
+model_chosen = 0
 env_chosen = 1
 
 
@@ -113,7 +113,7 @@ elif(env_chosen==1):
 dist = 0
 T = 1000
 alpha = 0.1
-lambda_ = 0.5
+lambda_ = 0
 b = 3.1
 eta = 0.1
 zi = 0.5
@@ -146,7 +146,7 @@ for t in range(T):
     #print(np.min(np.max(lambda_+eta*(b-np.dot(p0,np.array(c_list))),-10),zi))
     #break
     cf_,vf_ = np.dot(p0,np.array(c_list)),np.dot(p0,np.array(v_list))
-    lambda_ = np.min([np.max([lambda_+eta*(b-cf),0]),zi])
+    #lambda_ = np.min([np.max([lambda_+eta*(b-cf),0]),zi])
     p0 = p0/np.sum(p0);
     vf_list.append(vf_)
     cf_list.append(cf_)
@@ -154,4 +154,4 @@ print(p0)
 data_dict={'vf':np.array(vf_list),'cf':np.array(cf_list)}
 import pandas as pd
 df = pd.DataFrame(data_dict)
-df.to_excel('VF_CF_values'+env_type[env_chosen]+"_"+model_type[model_chosen]+".xlsx")
+df.to_excel('VF_CF_values'+env_type[env_chosen]+"_"+model_type[model_chosen]+"no_lambda.xlsx")

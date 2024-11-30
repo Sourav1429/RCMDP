@@ -8,7 +8,7 @@ Created on Sat Nov 23 06:28:24 2024
 from Machine_Rep import MachineReplacementEnv,RiverSwimEnv
 import pickle
 import numpy as np
-
+from itertools import product
 class Robust_Safe_RLA:
     def __init__(self,nS):
         self.nS = nS
@@ -87,7 +87,7 @@ class Robust_Safe_RLA:
 
 env_type = ["MR","RS"]
 model_type=["DQN","A2C"]
-model_chosen = 1
+model_chosen = 0
 env_chosen = 0
 
 print("Chosen::::",env_type[env_chosen]+"_all_policies_"+model_type[model_chosen]) 
@@ -101,10 +101,10 @@ with open("Uncertainity_set_"+env_type[env_chosen],"rb") as f:
 f.close()
 
 dist = 0
-T = 10
-alpha = 0.1
-lambda_,lambda_hat = 0.5,0.5
-b = 3
+T = 1000
+alpha = 0.001
+lambda_,lambda_hat = 0,0
+b = 6
 eta = 0.1
 zi = 0.5
 
@@ -137,13 +137,13 @@ for t in range(T):
         p0[pol] = p0_hat[pol]*np.exp(alpha*(vf+lambda_*cf))
     c_list = np.array(c_list)
     v_list = np.array(v_list)
-    lambda_ = np.min([np.max([lambda_hat+eta*(b-np.dot(prev_probs,c_list)),0]),zi])
+    #lambda_ = np.min([np.max([lambda_hat+eta*(b-np.dot(prev_probs,c_list)),0]),zi])
     p0_hat = p0_hat*np.exp(alpha*(v_list + lambda_*c_list))
-    lambda_hat = np.min([np.max([lambda_+eta*(b-np.dot(p0,c_list)),0]),zi])
+    #lambda_hat = np.min([np.max([lambda_+eta*(b-np.dot(p0,c_list)),0]),zi])
     cf_,vf_ = np.dot(p0,c_list),np.dot(p0,v_list)
     vf_list.append(vf_)
     cf_list.append(cf_)
 data_dict={'vf':np.array(vf_list),'cf':np.array(cf_list)}
 import pandas as pd
 df = pd.DataFrame(data_dict)
-df.to_excel('VF_CF_values_Fast_RSLA_'+env_type[env_chosen]+"_"+model_type[model_chosen]+".xlsx")
+df.to_excel('VF_CF_values_Fast_RSLA_new_no_lambda'+env_type[env_chosen]+"_"+model_type[model_chosen]+".xlsx")
