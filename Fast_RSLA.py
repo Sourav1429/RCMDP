@@ -103,7 +103,7 @@ f.close()
 dist = 0
 T = 1000
 alpha = 0.001
-lambda_,lambda_hat = 0,0
+lambda_,lambda_hat = -0.25,-0.25
 b = 6
 eta = 0.1
 zi = 0.5
@@ -137,9 +137,9 @@ for t in range(T):
         p0[pol] = p0_hat[pol]*np.exp(alpha*(vf+lambda_*cf))
     c_list = np.array(c_list)
     v_list = np.array(v_list)
-    #lambda_ = np.min([np.max([lambda_hat+eta*(b-np.dot(prev_probs,c_list)),0]),zi])
+    lambda_ = np.min([np.max([lambda_hat+eta*(b-np.dot(prev_probs,c_list)),0]),zi])
     p0_hat = p0_hat*np.exp(alpha*(v_list + lambda_*c_list))
-    #lambda_hat = np.min([np.max([lambda_+eta*(b-np.dot(p0,c_list)),0]),zi])
+    lambda_hat = np.min([np.max([lambda_+eta*(b-np.dot(p0,c_list)),0]),zi])
     cf_,vf_ = np.dot(p0,c_list),np.dot(p0,v_list)
     vf_list.append(vf_)
     cf_list.append(cf_)
