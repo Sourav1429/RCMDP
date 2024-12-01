@@ -113,7 +113,7 @@ elif(env_chosen==1):
 dist = 0
 T = 1000
 alpha = 0.1
-lambda_ = 0
+lambda_ = -0.5
 b = 3.1
 eta = 0.1
 zi = 0.5
@@ -146,7 +146,7 @@ for t in range(T):
     #print(np.min(np.max(lambda_+eta*(b-np.dot(p0,np.array(c_list))),-10),zi))
     #break
     cf_,vf_ = np.dot(p0,np.array(c_list)),np.dot(p0,np.array(v_list))
-    #lambda_ = np.min([np.max([lambda_+eta*(b-cf),0]),zi])
+    lambda_ = np.min([np.max([lambda_+eta*(b-cf),0]),zi])
     p0 = p0/np.sum(p0);
     vf_list.append(vf_)
     cf_list.append(cf_)
